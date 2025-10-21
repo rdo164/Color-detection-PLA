@@ -3,6 +3,8 @@ import os
 import numpy as np
 import clase as cls # to avoid name conflict with 'class' keyword
 from typing import Any, List, Tuple
+import hue_histogram as hh
+
 
 def create_window(name: str, img: Any, w: int, h: int, x: int, y: int) -> None:
     """
@@ -43,8 +45,8 @@ def pre_process(src: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         raise ValueError("Imagen de entrada vacía")
 
     # In case the image is grayscale, convert to BGR to avoid errors
-    if src.ndim == 2 or (src.ndim == 3 and src.shape[2] == 1):
-        src = cv2.cvtColor(src, cv2.COLOR_GRAY2BGR)
+    #if src.ndim == 2 or (src.ndim == 3 and src.shape[2] == 1):
+    #    src = cv2.cvtColor(src, cv2.COLOR_GRAY2BGR)
 
     hsv = cv2.cvtColor(src, cv2.COLOR_BGR2HSV)
     H, S, V = cv2.split(hsv)
@@ -83,7 +85,7 @@ def segmentacion(src: np.ndarray, H: np.ndarray, S: np.ndarray, V: np.ndarray
 
     # 3.3) Morpholofic cleaning
     e_k1 = (9, 9)
-    e_k2 = (3, 3)
+    e_k2 = (7, 7)
     k1 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, e_k1)  # OPEN: quits noise
     k2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, e_k2)  # CLOSED: fill the gaps
     
@@ -197,6 +199,9 @@ def feature_extraction(k1,k2,src: np.ndarray, obj_mask: np.ndarray, result: np.n
         window_x = 100 + idx * 350
         try:
             create_window(f"Pieza {idx}", p_img, 300, 300, window_x, 400)
+            
+            hist = hh.create_hue_histogram(p_img)
+            hh.plot_hue_histogram(hist)  
         except NameError:
             cv2.imshow(f"Pieza {idx}", p_img)
 
@@ -229,4 +234,4 @@ def run_pipeline(img_path):
     return 0
 
 if __name__ == "__main__":
-    run_pipeline("./img/IMG_8819.JPG")
+    run_pipeline("./img/IMG_8817.JPG")
