@@ -3,6 +3,7 @@ import os
 import numpy as np
 import clase as cls # to avoid name conflict with 'class' keyword
 from typing import Any, List, Tuple
+from imutils.video import VideoStream
 import hue_histogram as hh
 
 
@@ -41,8 +42,8 @@ def pre_process(src: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     ValueError: if src is None or empty.
     """
 
-    if src is None or src.size == 0:
-        raise ValueError("Imagen de entrada vacía")
+    # if src is None or src.size == 0:
+    #     raise ValueError("Imagen de entrada vacía")
 
     # In case the image is grayscale, convert to BGR to avoid errors
     #if src.ndim == 2 or (src.ndim == 3 and src.shape[2] == 1):
@@ -211,9 +212,7 @@ def feature_extraction(k1,k2,src: np.ndarray, obj_mask: np.ndarray, result: np.n
 def run_pipeline(img_path):
     # 1) Cargue image
     src = cv2.imread(img_path, cv2.IMREAD_COLOR)
-    if src is None:
-        print(f"Could not read image: {img_path}")
-        return -1
+
 
     # 2) Pre-process
     H, S, V = pre_process(src)  # Assuming pre_process returns H, S, V
@@ -234,4 +233,4 @@ def run_pipeline(img_path):
     return 0
 
 if __name__ == "__main__":
-    run_pipeline("./img/IMG_8817.JPG")
+    run_pipeline("./img/IMG_8819.JPEG")
